@@ -49,81 +49,125 @@ Handles the training process using Q-learning principles.
    ```
 
 2. Install dependencies:
+
+## Usage
+```bash
+   # Snake Game AI
+
+   This repository contains a simple Snake game and a Deep Q-Network (DQN) agent that learns to play it using
+   reinforcement learning. The project is intended as a learning/demo project for reinforcement learning concepts.
+
+   Overview
+   --------
+   - Model: Deep Q-Network (DQN) to approximate Q-values for actions given a game state.
+   - Languages / libs: Python, PyTorch, pygame, NumPy, matplotlib.
+
+   Quick links
+   -----------
+   - Code: `game.py`, `agent.py`, `model.py`, `helper.py`, `snake_game_human.py`
+   - Tests and CI: `.github/workflows/ci.yml`, `tests/`
+
+   Requirements
+   ------------
+   - Python 3.8+
+   - See `requirements.txt` for the main Python packages (PyTorch, pygame, numpy, matplotlib, ipython).
+
+   Installation
+   ------------
+   Clone and install dependencies:
+
    ```bash
+   git clone https://github.com/lewisnjue/snake-game-ai.git
+   cd snake-game-ai
    pip install -r requirements.txt
    ```
 
-## Usage
+   If you want GPU support, install a CUDA-enabled PyTorch build following the instructions on https://pytorch.org/.
 
-### Play the Game (Human Mode)
-```bash
-python snake_game_human.py
-```
-Use arrow keys to control the snake. Try to eat food and avoid hitting walls or yourself!
+   Running the project
+   -------------------
+   There are two main usage modes: human play and training the AI agent.
 
-### Train the AI Agent
-```bash
-python agent.py
-```
-The agent will train on multiple games. Training progress is plotted in real-time (requires a display).
+   1) Play as a human
 
-**Training Details:**
-- The agent learns by playing many games
-- Training saves the best model to `./model/model.pth`
-- Average scores are plotted after each game
-- Training takes ~20-30 minutes on CPU, ~5-10 minutes on GPU
+   ```bash
+   python snake_game_human.py
+   ```
 
-### Run Trained Agent
-To play with a trained model (coming soon - feature to add).
+   Use the arrow keys to control the snake. Close the window or press the window close button to quit.
 
-## Project Structure
+   2) Train the AI agent
 
-```
-.
-├── game.py                 # Core game engine (SnakeGameAI class)
-├── agent.py               # DQN agent and training loop
-├── model.py               # Neural network and trainer
-├── snake_game_human.py    # Human playable version
-├── helper.py              # Plotting utilities
-├── requirements.txt       # Python dependencies
-└── arial.ttf              # Font file (optional)
-```
+   The project now includes a small CLI. The recommended way to run training is via `agent.py`.
 
-## How It Works
+   Examples:
 
-1. **State Representation**: The agent observes 11 features:
-   - 3 danger signals (straight, left, right)
-   - 4 direction signals (current movement direction)
-   - 4 food location signals (relative to head)
+   ```bash
+   # Train (default settings)
+   python agent.py --mode train
 
-2. **Actions**: The agent chooses one of 3 actions:
-   - Go straight
-   - Turn right
-   - Turn left
+   # Train headless (no interactive plotting), run 100 games max, with a fixed seed
+   python agent.py --mode train --headless --max-games 100 --seed 42
 
-3. **Rewards**:
-   - +10 for eating food
-   - -10 for colliding with wall or itself
-   - 0 for each step
+   # Train with custom hyperparameters
+   python agent.py --mode train --lr 0.0005 --batch-size 512 --gamma 0.95
+   ```
 
-4. **Training**: Uses experience replay and Q-learning to improve policy
+   3) Human play via CLI (alias)
 
-## Performance
+   ```bash
+   python agent.py --mode play
+   ```
 
-The agent typically achieves scores of 10-30+ after sufficient training, compared to human performance of 5-15+ typically.
+   Note: `--mode play` currently launches the human play script. `--mode play-ai` is reserved for running a trained agent (future work).
 
-## Known Issues / TODO
+   CLI options (selected)
+   ----------------------
+   - `--mode`: `train` (default), `play`, `play-ai`
+   - `--block-size`: game grid cell size in pixels (default: 20)
+   - `--speed`: game speed (FPS) used during training (default: 40)
+   - `--speed-play`: game speed for human play (default: 20)
+   - `--headless`: disable interactive plotting and save PNG snapshots instead
+   - `--seed`: integer seed for reproducibility
+   - `--max-games`: stop training after N games
+   - `--model-path`: path to save/load the model
 
-- [ ] Large `arial.ttf` file bloats repo
-- [ ] No CLI flags for configuration
-- [ ] Plotting requires display (not suitable for headless training)
-- [ ] No reproducibility/seeding support
-- [ ] Missing unit tests and CI
+   Project structure
+   -----------------
 
-## Contributing
+   ```
+   . 
+   ├── agent.py               # DQN agent and training loop (entry point for training)
+   ├── game.py                # Core game engine (SnakeGameAI)
+   ├── model.py               # Neural network and training helper
+   ├── snake_game_human.py    # Human-playable version using pygame
+   ├── helper.py              # Plotting utilities (supports headless mode)
+   ├── requirements.txt       # Python dependencies
+   ├── tests/                 # Unit tests (pytest)
+   └── .github/workflows/ci.yml # CI pipeline (pytest + flake8)
+   ```
 
-Feel free to open issues or submit pull requests!
+   How the agent works (brief)
+   ---------------------------
+   - State: 11 features including danger indicators, current direction, and relative food position.
+   - Actions: 3 discrete actions (straight, right, left).
+   - Rewards: +10 for eating food, -10 for collision, 0 otherwise.
+   - Training: DQN with experience replay and a small feed-forward network.
 
-## License
+   Development notes and tips
+   -------------------------
+   - If you run on a headless server (CI or remote machine) use `--headless` to avoid interactive plotting.
+   - Use `--seed` to get repeatable runs (note: GPU floating point nondeterminism can still cause small differences).
+   - CI runs unit tests on multiple Python versions and checks imports and basic functionality.
 
-MIT License
+   Contributing
+   ------------
+   Open issues or PRs for improvements. Suggested next steps:
+
+   - Add a `play-ai` runner to load a saved model and let the agent play interactively.
+   - Add more informative logging and model checkpointing during training.
+   - Provide a short demo notebook showing training results and sample gameplay.
+
+   License
+   -------
+   MIT License
