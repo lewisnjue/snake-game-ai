@@ -30,22 +30,18 @@ jobs:
     
     - name: Lint with flake8
       run: |
-        # Stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics --ignore=E501,W503
     
     - name: Run unit tests with pytest
-      run: |
-        pytest tests/ -v --tb=short
+      run: pytest tests/ -v --tb=short
     
     - name: Test imports
-      run: |
-        python -c "from game import SnakeGameAI; from agent import Agent; from model import Linear_QNet; print('All imports OK')"
+      run: python -c "from game import SnakeGameAI; from agent import Agent; from model import Linear_QNet; print('All imports OK')"
     
     - name: Test basic functionality
       run: |
-        python -c "
+        python << 'PYEOF'
 from game import SnakeGameAI
 from agent import Agent
 game = SnakeGameAI()
@@ -55,4 +51,4 @@ print(f'State shape: {len(state)}')
 action = agent.get_action(state)
 print(f'Action: {action}')
 print('Basic functionality test passed!')
-"
+PYEOF
