@@ -100,7 +100,7 @@ class Agent:
         return final_move
 
 
-def train(headless=False):
+def train(headless=False, max_games=None):
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
@@ -108,6 +108,9 @@ def train(headless=False):
     agent = Agent()
     game = SnakeGameAI()
     while True:
+        if max_games and agent.n_games >= max_games:
+            print(f"Reached max_games limit ({max_games}). Stopping training.")
+            break
         # get old state
         state_old = agent.get_state(game)
 
@@ -144,6 +147,13 @@ def train(headless=False):
 
 
 if __name__ == '__main__':
-    import sys
-    headless = '--headless' in sys.argv
-    train(headless=headless)
+    from config import get_args
+    args = get_args()
+    
+    if args.mode == 'train':
+        train(headless=args.headless, max_games=args.max_games)
+    elif args.mode == 'play':
+        from snake_game_human import run_human_game
+        run_human_game()
+    elif args.mode == 'play-ai':
+        print("Play-AI mode not yet implemented")
