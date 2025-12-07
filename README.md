@@ -1,46 +1,129 @@
-**Reenforcement leraring** : is an area of machine learing conceted with how software agents ought to take actions in an evniroment in order to maximumze the notion of cumulative reward.
+# Snake Game AI
 
-or RL is teaching a software agent how to behave in an environment by telling it how good its doing.
+**Reinforcement Learning**: An area of machine learning concerned with how software agents ought to take actions in an environment in order to maximize the notion of cumulative reward. Or: RL is teaching a software agent how to behave in an environment by telling it how good it's doing.
 
-loss_fn = > bellman 
+## Model Used
 
+This game uses **Deep Q-Network (DQN)** for Reinforcement Learning.
 
+### What is DQN?
 
-### model used 
+- **Deep Q Networks** are a type of reinforcement learning model where an agent learns to take actions in an environment to maximize cumulative rewards over time.
+- Instead of maintaining a Q table (used in traditional Q-learning), the agent uses a neural network to approximate the Q-values for state-action pairs.
 
-this game uses Deep Q-Network(DQN) model for Reinforcement learing (RL) . 
+### Components of the Code
 
-**overview:what is DQN?**
+#### `Linear_QNet` Class
+Defines the neural network architecture for Q-function approximation.
 
-- *deep q networks* are a type of reinformcement learning model where an agent learns to take actions in an environment to maximize cumulative rewards overt time.
+**Attributes:**
+- `linear1`: A fully connected (dense) layer that maps `input_size` to `hidden_size`
+- `linear2`: Another fully connected layer that maps the hidden layer to `output_size` (Q-values for all actions)
 
-- instead fo maintaing a Q table ( used in traditinal Q-learning) , the agent uses a neural network to approximate the Q-values for state action pairs.
+**Forward Pass:**
+- Input `x` passes through `linear1` with ReLU activation
+- Output passed to `linear2` to compute final Q-values
 
-**components of the code**
+#### `QTrainer` Class
+Handles the training process using Q-learning principles.
 
-**linear_qnet class** 
-this class defines the nerual network architecture for the Q function aproximation.
+**Attributes:**
+- `model`: The neural network (instance of `Linear_QNet`)
+- `lr`: Learning rate for the optimizer
+- `gamma`: Discount factor for future rewards
+- `optimizer`: Adam optimizer for parameter updates
+- `criterion`: Mean Squared Error loss function
 
+## Installation
 
-** attributes**
-  - `linear1`: a fully connected (dense) layer that mps the `input_size` to a hidden layer of size `hidden_size`
+### Requirements
+- Python 3.7+
+- GPU recommended (CUDA for PyTorch) but CPU will work
 
-  - `linear2`: another fully connected layer that maps the hidden layer to the `output_size`, represnting q-values for all possible actions.
+### Setup
 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/lewisnjue/snake-game-ai.git
+   cd snake-game-ai
+   ```
 
-**forward pass**
-  - input `X` goes through `linear1` and applies the *RELU activation function*
-  - the output of `linear1` is passed to `linear2` to compute the final q-values.
-**save method**
-  - saves the models weights (`state_dict()`) toa file (`model.pth`) i a directory called `./model`
-** QTrainer Class **
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-this class hanles the training process for th model using Q-learning principles
-** attributes:**
-- model: the neural network ( an instance of Linear_qnet).
-- lr: learning rate for the optimizer.
-- gamma: discount factor for future rewards.
-- optimzer: an adam optimzer that updates the model parameters during training .
-- criterion: the loss fuction , specifically mean squred error to calcuate the difference etween predicted q-values and target q-values.
+## Usage
 
+### Play the Game (Human Mode)
+```bash
+python snake_game_human.py
+```
+Use arrow keys to control the snake. Try to eat food and avoid hitting walls or yourself!
 
+### Train the AI Agent
+```bash
+python agent.py
+```
+The agent will train on multiple games. Training progress is plotted in real-time (requires a display).
+
+**Training Details:**
+- The agent learns by playing many games
+- Training saves the best model to `./model/model.pth`
+- Average scores are plotted after each game
+- Training takes ~20-30 minutes on CPU, ~5-10 minutes on GPU
+
+### Run Trained Agent
+To play with a trained model (coming soon - feature to add).
+
+## Project Structure
+
+```
+.
+├── game.py                 # Core game engine (SnakeGameAI class)
+├── agent.py               # DQN agent and training loop
+├── model.py               # Neural network and trainer
+├── snake_game_human.py    # Human playable version
+├── helper.py              # Plotting utilities
+├── requirements.txt       # Python dependencies
+└── arial.ttf              # Font file (optional)
+```
+
+## How It Works
+
+1. **State Representation**: The agent observes 11 features:
+   - 3 danger signals (straight, left, right)
+   - 4 direction signals (current movement direction)
+   - 4 food location signals (relative to head)
+
+2. **Actions**: The agent chooses one of 3 actions:
+   - Go straight
+   - Turn right
+   - Turn left
+
+3. **Rewards**:
+   - +10 for eating food
+   - -10 for colliding with wall or itself
+   - 0 for each step
+
+4. **Training**: Uses experience replay and Q-learning to improve policy
+
+## Performance
+
+The agent typically achieves scores of 10-30+ after sufficient training, compared to human performance of 5-15+ typically.
+
+## Known Issues / TODO
+
+- [ ] Large `arial.ttf` file bloats repo
+- [ ] No CLI flags for configuration
+- [ ] Plotting requires display (not suitable for headless training)
+- [ ] No reproducibility/seeding support
+- [ ] Missing unit tests and CI
+
+## Contributing
+
+Feel free to open issues or submit pull requests!
+
+## License
+
+MIT License
