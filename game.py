@@ -1,3 +1,4 @@
+import os
 import pygame
 import random
 from enum import Enum
@@ -5,7 +6,14 @@ from collections import namedtuple
 import numpy as np
 
 pygame.init()
-font = pygame.font.Font('arial.ttf', 25)
+# Try to use local arial.ttf, fallback to system font
+try:
+    if os.path.exists('arial.ttf'):
+        font = pygame.font.Font('arial.ttf', 25)
+    else:
+        font = pygame.font.SysFont('arial', 25)
+except:
+    font = pygame.font.SysFont('arial', 25)
 #font = pygame.font.SysFont('arial', 25)
 
 class Direction(Enum):
