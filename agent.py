@@ -5,6 +5,7 @@ from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
+from seed_utils import set_seed
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -100,7 +101,8 @@ class Agent:
         return final_move
 
 
-def train(headless=False, max_games=None):
+def train(headless=False, max_games=None, seed=None):
+    set_seed(seed)
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
@@ -151,7 +153,7 @@ if __name__ == '__main__':
     args = get_args()
     
     if args.mode == 'train':
-        train(headless=args.headless, max_games=args.max_games)
+        train(headless=args.headless, max_games=args.max_games, seed=args.seed)
     elif args.mode == 'play':
         from snake_game_human import run_human_game
         run_human_game()
